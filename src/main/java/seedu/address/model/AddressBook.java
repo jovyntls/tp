@@ -1,7 +1,6 @@
 package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 
 import javafx.collections.ObservableList;
@@ -9,6 +8,8 @@ import seedu.address.model.cca.Cca;
 import seedu.address.model.cca.UniqueCcaList;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.UniquePersonList;
+import seedu.address.model.reminder.Reminder;
+import seedu.address.model.reminder.UniqueReminderList;
 
 /**
  * Wraps all data at the address-book level
@@ -18,6 +19,7 @@ public class AddressBook implements ReadOnlyAddressBook {
 
     private final UniquePersonList persons;
     private final UniqueCcaList ccas;
+    private final UniqueReminderList reminders;
 
     /*
      * The 'unusual' code block below is a non-static initialization block, sometimes used to avoid duplication
@@ -29,6 +31,7 @@ public class AddressBook implements ReadOnlyAddressBook {
     {
         persons = new UniquePersonList();
         ccas = new UniqueCcaList();
+        reminders = new UniqueReminderList();
     }
 
     public AddressBook() {}
@@ -52,12 +55,21 @@ public class AddressBook implements ReadOnlyAddressBook {
     }
 
     /**
+     * Replaces the contents of the person list with {@code persons}.
+     * {@code persons} must not contain duplicate persons.
+     */
+    public void setCcas(List<Cca> ccas) {
+        this.ccas.setCcas(ccas);
+    }
+
+    /**
      * Resets the existing data of this {@code AddressBook} with {@code newData}.
      */
     public void resetData(ReadOnlyAddressBook newData) {
         requireNonNull(newData);
 
         setPersons(newData.getPersonList());
+        setCcas(newData.getCcaList());
     }
 
     //// person-level operations
@@ -134,6 +146,43 @@ public class AddressBook implements ReadOnlyAddressBook {
         ccas.remove(key);
     }
 
+    //// reminder-level operations
+
+    /**
+     * Returns true if a person with the same identity as {@code person} exists in the address book.
+     */
+    public boolean hasReminder(Reminder reminder) {
+        requireNonNull(reminder);
+        return reminders.contains(reminder);
+    }
+
+    /**
+     * Adds a reminder to the address book.
+     * The reminder must not already exist in the address book.
+     */
+    public void addReminder(Reminder p) {
+        reminders.add(p);
+    }
+
+    /**
+     * Replaces the given reminder {@code target} in the list with {@code editedReminder}.
+     * {@code target} must exist in the address book.
+     * The reminder identity of {@code editedReminder} must not be the same as another existing reminder in the address book.
+     */
+    public void setReminder(Reminder target, Reminder editedReminder) {
+        requireNonNull(editedReminder);
+
+        reminders.setReminder(target, editedReminder);
+    }
+
+    /**
+     * Removes {@code key} from this {@code AddressBook}.
+     * {@code key} must exist in the address book.
+     */
+    public void removeReminder(Reminder key) {
+        reminders.remove(key);
+    }
+
     //// util methods
 
     @Override
@@ -150,6 +199,11 @@ public class AddressBook implements ReadOnlyAddressBook {
     @Override
     public ObservableList<Cca> getCcaList() {
         return ccas.asUnmodifiableObservableList();
+    }
+
+    @Override
+    public ObservableList<Reminder> getReminderList() {
+        return reminders.asUnmodifiableObservableList();
     }
 
     @Override

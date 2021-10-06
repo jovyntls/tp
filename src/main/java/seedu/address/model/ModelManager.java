@@ -2,7 +2,6 @@ package seedu.address.model;
 
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
-
 import java.nio.file.Path;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -13,6 +12,7 @@ import seedu.address.commons.core.GuiSettings;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.model.cca.Cca;
 import seedu.address.model.person.Person;
+import seedu.address.model.reminder.Reminder;
 
 /**
  * Represents the in-memory model of the address book data.
@@ -24,6 +24,7 @@ public class ModelManager implements Model {
     private final UserPrefs userPrefs;
     private final FilteredList<Person> filteredPersons;
     private final FilteredList<Cca> filteredCcas;
+    private final FilteredList<Reminder> filteredReminders;
 
     /**
      * Initializes a ModelManager with the given addressBook and userPrefs.
@@ -38,6 +39,7 @@ public class ModelManager implements Model {
         this.userPrefs = new UserPrefs(userPrefs);
         filteredPersons = new FilteredList<>(this.addressBook.getPersonList());
         filteredCcas = new FilteredList<>(this.addressBook.getCcaList());
+        filteredReminders = new FilteredList<>(this.addressBook.getReminderList());
     }
 
     public ModelManager() {
@@ -116,9 +118,9 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public boolean hasCca(Cca person) {
-        requireNonNull(person);
-        return addressBook.hasCca(person);
+    public boolean hasCca(Cca cca) {
+        requireNonNull(cca);
+        return addressBook.hasCca(cca);
     }
 
     @Override
@@ -127,8 +129,8 @@ public class ModelManager implements Model {
     }
 
     @Override
-    public void addCca(Cca person) {
-        addressBook.addCca(person);
+    public void addCca(Cca cca) {
+        addressBook.addCca(cca);
         updateFilteredCcaList(PREDICATE_SHOW_ALL_CCAS);
     }
 
@@ -137,6 +139,30 @@ public class ModelManager implements Model {
         requireAllNonNull(target, editedCca);
 
         addressBook.setCca(target, editedCca);
+    }
+
+    @Override
+    public boolean hasReminder(Reminder reminder) {
+        requireNonNull(reminder);
+        return addressBook.hasReminder(reminder);
+    }
+
+    @Override
+    public void deleteReminder(Reminder target) {
+        addressBook.removeReminder(target);
+    }
+
+    @Override
+    public void addReminder(Reminder reminder) {
+        addressBook.addReminder(reminder);
+        updateFilteredReminderList(PREDICATE_SHOW_ALL_REMINDERS);
+    }
+
+    @Override
+    public void setReminder(Reminder target, Reminder editedReminder) {
+        requireAllNonNull(target, editedReminder);
+
+        addressBook.setReminder(target, editedReminder);
     }
 
     //=========== Filtered Person List Accessors =============================================================
@@ -171,6 +197,23 @@ public class ModelManager implements Model {
     public void updateFilteredCcaList(Predicate<Cca> predicate) {
         requireNonNull(predicate);
         filteredCcas.setPredicate(predicate);
+    }
+
+    //=========== Filtered Reminder List Accessors =============================================================
+
+    /**
+     * Returns an unmodifiable view of the list of {@code Person} backed by the internal list of
+     * {@code versionedAddressBook}
+     */
+    @Override
+    public ObservableList<Reminder> getFilteredReminderList() {
+        return filteredReminders;
+    }
+
+    @Override
+    public void updateFilteredReminderList(Predicate<Reminder> predicate) {
+        requireNonNull(predicate);
+        filteredReminders.setPredicate(predicate);
     }
 
     @Override

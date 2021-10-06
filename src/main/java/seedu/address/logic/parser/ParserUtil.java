@@ -1,7 +1,6 @@
 package seedu.address.logic.parser;
 
 import static java.util.Objects.requireNonNull;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,6 +13,7 @@ import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
 import seedu.address.model.person.Phone;
+import seedu.address.model.reminder.ReminderName;
 import seedu.address.model.tag.Tag;
 
 /**
@@ -64,6 +64,21 @@ public class ParserUtil {
             throw new ParseException(Name.MESSAGE_CONSTRAINTS);
         }
         return new CcaName(trimmedName);
+    }
+
+    /**
+     * Parses a {@code String name} into a {@code ReminderName}.
+     * Leading and trailing whitespaces will be trimmed.
+     *
+     * @throws ParseException if the given {@code name} is invalid.
+     */
+    public static ReminderName parseReminderName(String name) throws ParseException {
+        requireNonNull(name);
+        String trimmedName = name.trim();
+        if (!Name.isValidName(trimmedName)) {
+            throw new ParseException(Name.MESSAGE_CONSTRAINTS);
+        }
+        return new ReminderName(trimmedName);
     }
 
     /**
